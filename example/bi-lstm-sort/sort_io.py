@@ -129,12 +129,11 @@ class BucketSentenceIter(mx.io.DataIter):
         content = self.read_content(path)
         sentences = content.split(seperate_char)
 
-        if len(buckets) == 0:
-            buckets = default_gen_buckets(sentences, batch_size, vocab)
-        print(buckets)
+        buckets = default_gen_buckets(sentences, batch_size, vocab)
         self.vocab_size = len(vocab)
         self.data_name = data_name
         self.label_name = label_name
+        self.seq_len = buckets[0]
 
         buckets.sort()
         self.buckets = buckets
@@ -161,6 +160,7 @@ class BucketSentenceIter(mx.io.DataIter):
                 sentence = self.data[i_bucket][j]
                 data[i_bucket][j, :len(sentence)] = sentence
         self.data = data
+        self.seq_len = buckets[0]
 
         # Get the size of each bucket, so that we could sample
         # uniformly from the bucket
